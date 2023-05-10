@@ -19,13 +19,14 @@ import Moralis from "./api/moralis";
 import { memoryUsage } from "process";
 
 const clientId = "BEglQSgt4cUWcj6SKRdu5QkOXTsePmMcusG5EAoyjyOYKlVRjIF1iCNnMOTfpzCiunHRrMui8TIwQPXdkQ8Yxuk"; // get from https://dashboard.web3auth.io
-const moralis = new Moralis();
+
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
   const [torusPlugin, setTorusPlugin] = useState<TorusWalletConnectorPlugin | null>(null);
   const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null);
-  
+  const [activeIndex, setActiveIndex] = useState(-1);
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -125,10 +126,10 @@ function App() {
 
   const fetchPokemon = async () => {
     const res = await axios.get(
-        'https://pokeapi.co/api/v2/pokemon/pikachu'
+      'https://pokeapi.co/api/v2/pokemon/pikachu'
     );
     uiConsole(res);
-    return; 
+    return;
   };
 
   const uploadToIPFS = async () => {
@@ -138,34 +139,34 @@ function App() {
     var config = {
       method: 'post',
       url: 'https://ipfs.infura.io:5001/api/v0/add',
-      headers: { 
+      headers: {
         'Authorization': 'Basic MlBQdmtEQWRkR3JGR2Q0RnJKeTlVRUJyT2NGOjkyODY0ZjA2YWYxZTg0MzJkMTM5ZjQ1ZWJmNDIzMjk1'
       },
-      data : data
+      data: data
     };
-    
+
     axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-      uiConsole(response.data);
-    })
-    .catch(function (error) {
-      console.log(error);
-      uiConsole(error);
-    });
-    return; 
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        uiConsole(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+        uiConsole(error);
+      });
+    return;
   };
 
   const ipfsUploadImage = async () => {
     var response = await axios.get('/api/ipfs-upload-image');
     uiConsole(response);
-    return; 
+    return;
   };
 
   const ipfsUploadMetadata = async () => {
     var response = await axios.get('/api/ipfs-upload-metadata');
     uiConsole(response);
-    return; 
+    return;
   };
 
   const login = async () => {
@@ -238,7 +239,7 @@ function App() {
     uiConsole(chainId);
   };
 
-  
+
   const mintCertificate = async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -249,10 +250,11 @@ function App() {
     uiConsole(response);
   };
 
-  
+
   const listOwneredNFT = async () => {
     const rpc = new RPC(provider);
     const address = await rpc.getAccounts();
+    const moralis = new Moralis();
     var response = await moralis.getOwnedTokens(address);
     displayCards(response);
     return;
@@ -340,23 +342,54 @@ function App() {
   function uiConsole(...args: any[]): void {
     const el = document.querySelector("#console>p");
     if (el) {
-      el.innerHTML = JSON.stringify(args || {}, null, 2);
+      //el.innerHTML = JSON.stringify(args || {}, null, 1);
+      const stringValue = JSON.stringify(args);
+      var cleanedString = "";
+      if (stringValue) {
+        cleanedString = stringValue.substring(1, stringValue.length - 1);
+      }
+      if (cleanedString && cleanedString != "ul") {
+        el.innerHTML = cleanedString;
+      } else {
+        el.innerHTML = "No data"
+      }
     }
   }
 
   function displayCards(...args: any[]): void {
     const el = document.querySelector("#console>p");
-    
+
     if (el) {
-      var htmltable = "<table><thead><tr><th>Token Address</th><th>Name</th><th>BlockNumber</th><th>Image</th></tr></thead><tbody>"
-      for(let val in args[0]){
-        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].name + " </td><td> " + args[0][val].blockNumber + " </td><td><img src='https://ipfs.io/ipfs/" + args[0][val].metadata.image + "' height=120 width=120/></td></tr>" ;
+      var htmltable = "<table><thead><tr><th>Token Address</th><th>Name</th><th>Block Number</th><th>Image</th></tr></thead><tbody>"
+      for (let val in args[0]) {
+        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].name + " </td><td> " + args[0][val].blockNumber + " </td><td><img src='https://ipfs.io/ipfs/" + args[0][val].metadata.image + "' height=120 width=120/></td></tr>";
       }
 
       htmltable += "</tbody></table>";
       el.innerHTML = htmltable;
       // el.innerHTML = JSON.stringify(args[0]);
-      // mytable += "contractType: " + token + "</br>";      
+      // mytable += "contractType: " + token + "</br>";
+    }
+  }
+
+  function handleButtonClick(params: String, index: any) {
+    setActiveIndex(index);
+    if (params == "getUserInfo") {
+      getUserInfo();
+    } else if (params == "mintCertificate") {
+      mintCertificate();
+    } else if (params == "listOwneredNFT") {
+      listOwneredNFT();
+    } else if (params == "authenticateUser") {
+      authenticateUser();
+    } else if (params == "getChainId") {
+      getChainId();
+    } else if (params == "getAccounts") {
+      getAccounts();
+    } else if (params == "getBalance") {
+      getBalance();
+    } else if (params == "logout") {
+      logout();
     }
   }
 
@@ -364,66 +397,69 @@ function App() {
     <>
       <div className="flex-container">
         <div>
-          <button onClick={getUserInfo} className="card">
+          <button onClick={() => handleButtonClick('getUserInfo', 1)} className={activeIndex === 1 ? "active" : "button"}>
             Get User Info
           </button>
         </div>
         <div>
-          <button onClick={mintCertificate} className="card">
+          <button onClick={() => handleButtonClick('mintCertificate', 2)} className={activeIndex === 2 ? "active" : "button"}>
             Issue Certificate to Employee
           </button>
         </div>
         <div>
-          <button onClick={listOwneredNFT} className="card">
+          <button onClick={() => handleButtonClick('listOwneredNFT', 3)} className={activeIndex === 3 ? "active" : "button"}>
             List Owned NFT
           </button>
         </div>
         <div>
-          <button onClick={authenticateUser} className="card">
+          <button onClick={() => handleButtonClick('authenticateUser', 4)} className={activeIndex === 4 ? "active" : "button"}>
             Get ID Token
           </button>
         </div>
         <div>
-          <button onClick={getChainId} className="card">
+          <button onClick={() => handleButtonClick('getChainId', 5)} className={activeIndex === 5 ? "active" : "button"}>
             Get Chain ID
           </button>
         </div>
         <div>
-          <button onClick={getAccounts} className="card">
+          <button onClick={() => handleButtonClick('getAccounts', 6)} className={activeIndex === 6 ? "active" : "button"}>
             Get Accounts
           </button>
         </div>
         <div>
-          <button onClick={getBalance} className="card">
+          <button onClick={() => handleButtonClick('getBalance', 7)} className={activeIndex === 7 ? "active" : "button"}>
             Get Balance
           </button>
         </div>
         <div>
-          <button onClick={logout} className="card">
+          <button onClick={() => handleButtonClick('logout', 8)} className={activeIndex === 8 ? "active" : "logout"} style={{ backgroundColor: "red" }}>
             Log Out
           </button>
         </div>
       </div>
       <div id="console" style={{ whiteSpace: "pre-line" }}>
-        <p style={{ whiteSpace: "pre-line" }}></p>
+        <p></p>
       </div>
     </>
   );
 
   const unloggedInView = (
-    <button onClick={login} className="card">
-      Login
-    </button>
+    <div className="div-center">
+      <button onClick={login}>
+        <b>Login</b>
+      </button>
+    </div>
   );
 
   return (
     <div className="container">
-      <h1 className="title">
-        Professional Digital Wallet Demo
-      </h1>
+      <div className="card-layer">
+        <h1 className="title">
+          Professional Digital Wallet Demo
+        </h1>
 
-      <div className="grid">{provider ? loggedInView : unloggedInView}</div>
-
+        <div className="grid">{provider ? loggedInView : unloggedInView}</div>
+      </div>
     </div>
   );
 }

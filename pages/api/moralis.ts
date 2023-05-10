@@ -9,11 +9,11 @@ export default class MoralisHelper {
 
   constructor() {
     Moralis.start({
-      apiKey: process.env.MORALIS_KEY,
+      apiKey: "otT9KtsxXo4NwpIieerFLQHrfBcQoZO6luPzudqW8msMsMbYlf4JY7fWGeg2J7K3",
     });
   }
 
-  async getOwnedTokens(address: string): Promise<any>  {
+  async getOwnedTokens(address: string): Promise<any> {
     const chain = EvmChain.MUMBAI;
     const response = await Moralis.EvmApi.nft.getWalletNFTs({
       address,

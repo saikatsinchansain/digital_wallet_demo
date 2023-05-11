@@ -5,14 +5,15 @@ import { CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import { Web3Auth } from "@web3auth/modal";
 import { TorusWalletAdapter } from "@web3auth/torus-evm-adapter";
-// import RPC from ".api/ethersRPC"; // for using ethers.js
+import CustomPopUp from "./MintCertificatePopUp"
+import RPC from "./api/ethersRPC"; // for using ethers.js
 // Plugins
 import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
 // Adapters
 import { WalletConnectV1Adapter } from "@web3auth/wallet-connect-v1-adapter";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef  } from "react";
 
-import RPC from "./api/ethersRPC"; // for using web3.js
+//import RPC from "./api/web3RPC"; // for using web3.js
 import axios from "axios";
 import { ethers } from "ethers";
 import Moralis from "./api/moralis";
@@ -26,6 +27,13 @@ function App() {
   const [torusPlugin, setTorusPlugin] = useState<TorusWalletConnectorPlugin | null>(null);
   const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
+
+  //form data
+  const [dataOne, setDataOne] = useState("")
+  const [dataTwo, setDataTwo] = useState("")
+  const [dataThree, setDataThree] = useState("")
+  const [mintCertificatePop, setMintCertificate] = useState(false)
+  const ref = useRef(null);
 
   useEffect(() => {
     const init = async () => {
@@ -131,6 +139,43 @@ function App() {
     uiConsole(res);
     return;
   };
+
+  const mintCert = async () => {
+    setMintCertificate(!mintCertificatePop)
+  };
+
+  const onChange = (key: string, evt: any) => {
+    let value = evt?.target?.value;
+    switch (key) {
+      case "dataOne":
+        setDataOne(value)
+        break;
+
+      case "dataTwo":
+        setDataTwo(value)
+        break;
+
+      case "dataThree":
+        setDataThree(value)
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const onSubmit=async ()=>{
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const contractAddress = await rpc.mintCertificate(dataOne, dataTwo, dataThree);
+    setMintCertificate(!mintCertificatePop)
+    // uiConsole(dataOne,dataTwo,dataThree);
+    uiConsole(contractAddress);
+  }
+
 
   const uploadToIPFS = async () => {
     var data = new FormData();
@@ -246,7 +291,7 @@ function App() {
       return;
     }
     const rpc = new RPC(provider);
-    const response = await rpc.mintCertificate();
+    const response = await rpc.mintCertificate("","","");
     uiConsole(response);
   };
 
@@ -305,7 +350,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const balance = await rpc.getBalance();
-    uiConsole(process.env.MORALIS_KEY);
+    uiConsole(balance);
   };
 
   const sendTransaction = async () => {
@@ -390,15 +435,18 @@ function App() {
       getBalance();
     } else if (params == "logout") {
       logout();
+    } else if (params == "mintCert") {
+      mintCert();
     }
   }
 
   const loggedInView = (
     <>
       <div className="flex-container">
+
         <div>
-          <button onClick={() => handleButtonClick('getUserInfo', 1)} className={activeIndex === 1 ? "active" : "button"}>
-            Get User Info
+          <button onClick={() => handleButtonClick('mintCert', 1)} className={activeIndex === 1 ? "active" : "button"}>
+          Mint Certificate
           </button>
         </div>
         <div>
@@ -459,6 +507,18 @@ function App() {
         </h1>
 
         <div className="grid">{provider ? loggedInView : unloggedInView}</div>
+
+        {provider && mintCertificate && (
+        <CustomPopUp
+          onClose={() => {
+            setMintCertificate(false);
+          }}
+          show={mintCertificate}
+          title="Mint Certificate"
+          onchange={onChange}
+          onsubmit={onSubmit}
+        ></CustomPopUp>
+        )}
       </div>
     </div>
   );

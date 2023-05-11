@@ -108,7 +108,7 @@ export default class EthereumRpc {
     }
   }
 
-  async mintCertificate(): Promise<any> {
+  async mintCertificate(arg1: string, arg2: string, arg3: string): Promise<any> {
     try {
       const ethersProvider = new ethers.providers.Web3Provider(this.provider);
       const signer = ethersProvider.getSigner();

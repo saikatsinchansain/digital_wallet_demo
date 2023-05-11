@@ -21,7 +21,7 @@ function actual(req: NextApiRequest, res: NextApiResponse<Data>){
     method: 'post',
     url: 'https://jbgomwwpb0.execute-api.us-west-1.amazonaws.com/demo/image-generate',
     headers: { 
-      'x-api-key': process.env.OPEN_AI_X_KEY, 
+      'x-api-key': "c0nmtdhvU49gdd0Kk6KVd50US8FjtKg7ksLBup5h", 
       'Content-Type': 'application/json'
     },
     data : openAIdata
@@ -37,7 +37,7 @@ function actual(req: NextApiRequest, res: NextApiResponse<Data>){
     method: 'post',
     url: 'https://ipfs.infura.io:5001/api/v0/add',
     headers: { 
-      'Authorization': 'Basic process.env.INFURA_API_KEY'
+      'Authorization': 'Basic MlBQdmtEQWRkR3JGR2Q0RnJKeTlVRUJyT2NGOjkyODY0ZjA2YWYxZTg0MzJkMTM5ZjQ1ZWJmNDIzMjk1'
     },
     data : uploadImagedata
   };
@@ -51,7 +51,7 @@ function actual(req: NextApiRequest, res: NextApiResponse<Data>){
         method: 'post',
         url: 'https://ipfs.infura.io:5001/api/v0/add',
         headers: { 
-          'Authorization': 'process.env.INFURA_API_KEY'
+          'Authorization': 'Basic MlBQdmtEQWRkR3JGR2Q0RnJKeTlVRUJyT2NGOjkyODY0ZjA2YWYxZTg0MzJkMTM5ZjQ1ZWJmNDIzMjk1'
         },
         data : metadata
       };
@@ -84,7 +84,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
       method: 'post',
       url: 'https://ipfs.infura.io:5001/api/v0/add',
       headers: { 
-        'Authorization': 'Basic process.env.INFURA_API_KEY'
+        'Authorization': 'Basic MlBQdmtEQWRkR3JGR2Q0RnJKeTlVRUJyT2NGOjkyODY0ZjA2YWYxZTg0MzJkMTM5ZjQ1ZWJmNDIzMjk1'
       },
       data : uploadImagedata
     };
@@ -98,7 +98,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
           method: 'post',
           url: 'https://ipfs.infura.io:5001/api/v0/add',
           headers: { 
-            'Authorization': 'Basic process.env.INFURA_API_KEY'
+            'Authorization': 'Basic MlBQdmtEQWRkR3JGR2Q0RnJKeTlVRUJyT2NGOjkyODY0ZjA2YWYxZTg0MzJkMTM5ZjQ1ZWJmNDIzMjk1'
           },
           data : metadata
         };

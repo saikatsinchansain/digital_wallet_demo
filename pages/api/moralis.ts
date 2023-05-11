@@ -8,9 +8,11 @@ export default class MoralisHelper {
   private moralis: any;
 
   constructor() {
-    Moralis.start({
-      apiKey: "otT9KtsxXo4NwpIieerFLQHrfBcQoZO6luPzudqW8msMsMbYlf4JY7fWGeg2J7K3",
-    });
+    if (!Moralis.Core.isStarted) {
+      Moralis.start({
+        apiKey: "otT9KtsxXo4NwpIieerFLQHrfBcQoZO6luPzudqW8msMsMbYlf4JY7fWGeg2J7K3",
+      });
+    }
   }
 
   async getOwnedTokens(address: string): Promise<any> {

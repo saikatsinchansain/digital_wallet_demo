@@ -11,7 +11,7 @@ import RPC from "./api/ethersRPC"; // for using ethers.js
 import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
 // Adapters
 import { WalletConnectV1Adapter } from "@web3auth/wallet-connect-v1-adapter";
-import { useEffect, useState, useRef  } from "react";
+import { useEffect, useState, useRef } from "react";
 
 //import RPC from "./api/web3RPC"; // for using web3.js
 import axios from "axios";
@@ -164,7 +164,7 @@ function App() {
     }
   };
 
-  const onSubmit=async ()=>{
+  const onSubmit = async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
@@ -291,7 +291,7 @@ function App() {
       return;
     }
     const rpc = new RPC(provider);
-    const response = await rpc.mintCertificate("","","");
+    const response = await rpc.mintCertificate("", "", "");
     uiConsole(response);
   };
 
@@ -446,7 +446,7 @@ function App() {
 
         <div>
           <button onClick={() => handleButtonClick('mintCert', 1)} className={activeIndex === 1 ? "active" : "button"}>
-          Mint Certificate
+            Mint Certificate
           </button>
         </div>
         <div>
@@ -508,16 +508,16 @@ function App() {
 
         <div className="grid">{provider ? loggedInView : unloggedInView}</div>
 
-        {provider && mintCertificate && (
-        <CustomPopUp
-          onClose={() => {
-            setMintCertificate(false);
-          }}
-          show={mintCertificate}
-          title="Mint Certificate"
-          onchange={onChange}
-          onsubmit={onSubmit}
-        ></CustomPopUp>
+        {provider && mintCertificatePop && (
+          <CustomPopUp
+            onClose={() => {
+              setMintCertificate(false);
+            }}
+            show={mintCertificatePop}
+            title="Mint Certificate"
+            onchange={onChange}
+            onsubmit={onSubmit}
+          ></CustomPopUp>
         )}
       </div>
     </div>

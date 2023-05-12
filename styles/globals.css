@@ -203,21 +203,17 @@ button {
     gap: 1.4rem;
 }
 
-.mint-input1{
+.mint-input{
 	border: 1px solid #000306;
-	margin-left: 50px;
-	height: 25px;
+	width: 99%;
+	height: 99%;
 }
-.mint-input2{
+.mint-input-description{
 	border: 1px solid #000306;
-	margin-left: 98px;
-	height: 25px;
+	width: 99%;
+	height: 75px;
 }
-.mint-input3{
-	border: 1px solid #000306;
-	margin-left: 44px;
-	height: 25px;
-}
+
 
 /*
 .mint-input textarea:focus, input:focus{
@@ -226,8 +222,16 @@ button {
 
 .mint-label{
 	color: #0070f3;
-	align-self: center;
+	align-self: left;
 	
+}
+
+.form-label{
+	width: 20%;
+}
+
+.form-input{
+	width: 80%;
 }
 /* pop-up css */
 
@@ -289,10 +293,10 @@ button {
 	padding: 20px;
 	background: #fff;
 	border-radius: 5px;
-	width: 40%;
+	width: 60%;
 	position: relative;
 	transition: all 5s ease-in-out;
-	height:300px;
+	height:450px;
   }
    
   .popup h2 {
@@ -327,11 +331,18 @@ button {
 	
   }
   .submit-button{
-	color: rgb(3, 12, 19);
-	height:30px;
-	width:80px;
-	font-size: large;
-	background-color: white;
+	background-color: #407BB7;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	padding: 10px;
+	cursor: pointer;
+	width: 130px;
+	height: 50px;
+	font-weight: bold;
+	margin-right: 10px;
+	font-size: 12px;
+	opacity: 1;
 	
 
 }

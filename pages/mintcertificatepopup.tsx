@@ -29,15 +29,20 @@ const CustomPopup = (props:any) => {
         </div>
         <div className="content">
         <div className="container-flex">
-      <label className="mint-label">Enter Contract Address : 
-        <input className="mint-input1" onChange={(evt)=>{onchange("dataOne",evt)}} type="text" />
-      </label>
-      <label className="mint-label">Enter Certificate : 
-        <input className="mint-input2" onChange={(evt)=>{onchange("dataTwo",evt)}} type="text" />
-      </label>
-      <label className="mint-label">Enter Associate Address : 
-        <input className="mint-input3" onChange={(evt)=>{onchange("dataThree",evt)}} type="text" />
-      </label>
+          <table>
+            <tr>
+              <td className="form-label"><label className="mint-label">Recipient Address : </label></td>
+              <td className="form-input"><input className="mint-input" onChange={(evt)=>{onchange("receiverAddress",evt)}} type="text" /></td>
+            </tr>
+            <tr>
+              <td className="form-label"><label className="mint-label">Certificate Text:</label></td>
+              <td className="form-input"><input className="mint-input-description" onChange={(evt)=>{onchange("certificateTextPhrase",evt)}} type="text" /></td>
+            </tr> 
+            <tr>
+              <td className="form-label"><label className="mint-label">Description :</label></td>
+              <td className="form-input"><input className="mint-input" onChange={(evt)=>{onchange("certificateDescription",evt)}} type="text" /></td>
+            </tr>    
+        </table>
       <button className="submit-button" onClick={()=>{onsubmit()}}>Submit</button>
     </div>
         </div>

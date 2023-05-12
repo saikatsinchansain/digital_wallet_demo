@@ -9,12 +9,17 @@ type Data = {
 
 function decodeBase64ToImage(base64: string){
   const buffer = Buffer.from(base64, "base64");
-  fs.writeFileSync("C:/Users/saika/Pictures/dummy.png", buffer);
+  fs.writeFileSync("dummy.png", buffer);
 }
 
-function actual(req: NextApiRequest, res: NextApiResponse<Data>){
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>){
+  const {
+    query: { certificateName, receiverAddress, certificateTextPhrase, certificateDescription },
+    method,
+  } = req;
+
   var openAIdata = JSON.stringify({
-    "text": "PhD Degree California University conv"
+    "text": certificateTextPhrase
   });
 
   var openAIConfig = {
@@ -32,7 +37,7 @@ function actual(req: NextApiRequest, res: NextApiResponse<Data>){
     console.log(JSON.stringify(response.data));
     decodeBase64ToImage(response.data.body);  
     var uploadImagedata = new FormData();
-  uploadImagedata.append('path', fs.createReadStream('C:/Users/saika/Pictures/dummy.png'));
+  uploadImagedata.append('path', fs.createReadStream('dummy.png'));
   var imageUploadIPFSconfig = {
     method: 'post',
     url: 'https://ipfs.infura.io:5001/api/v0/add',
@@ -46,7 +51,7 @@ function actual(req: NextApiRequest, res: NextApiResponse<Data>){
       console.log(JSON.stringify(response.data));
 
       var metadata = new FormData();
-      metadata.append('path', JSON.stringify({name: "Hello World!", image: response.data.Hash}));
+      metadata.append('path', JSON.stringify({name: certificateName, description: certificateDescription, image: response.data.Hash}));
       var metadataConfig = {
         method: 'post',
         url: 'https://ipfs.infura.io:5001/api/v0/add',
@@ -58,7 +63,7 @@ function actual(req: NextApiRequest, res: NextApiResponse<Data>){
       
       axios(metadataConfig).then(function (response) {
           console.log(JSON.stringify(response.data));
-          res.status(200).json(response.data);
+          res.status(200).json(response.data.Hash);
         })
         .catch(function (error) {
           console.log(error);
@@ -76,8 +81,12 @@ function actual(req: NextApiRequest, res: NextApiResponse<Data>){
   });
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-
+export function hardcoded(req: NextApiRequest, res: NextApiResponse<Data>) {
+  const {
+    query: { certificateName, receiverAddress, certificateTextPhrase, certificateDescription },
+    method,
+  } = req;
+  
     var uploadImagedata = new FormData();
     uploadImagedata.append('path', fs.createReadStream('C:/Users/saika/Pictures/dummy.png'));
     var imageUploadIPFSconfig = {
@@ -105,7 +114,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         
         axios(metadataConfig).then(function (response) {
             console.log(JSON.stringify(response.data));
-            res.status(200).json(response.data);
+            res.status(200).json(response.data.Hash);
           })
           .catch(function (error) {
             console.log(error);

@@ -29,9 +29,9 @@ function App() {
   const [activeIndex, setActiveIndex] = useState(-1);
 
   //form data
-  const [dataOne, setDataOne] = useState("")
-  const [dataTwo, setDataTwo] = useState("")
-  const [dataThree, setDataThree] = useState("")
+  const [receiverAddress, setreceiverAddress] = useState("")
+  const [certificateTextPhrase, setcertificateTextPhrase] = useState("")
+  const [certificateDescription, setcertificateDescription] = useState("")
   const [mintCertificatePop, setMintCertificate] = useState(false)
   const ref = useRef(null);
 
@@ -147,16 +147,16 @@ function App() {
   const onChange = (key: string, evt: any) => {
     let value = evt?.target?.value;
     switch (key) {
-      case "dataOne":
-        setDataOne(value)
+      case "receiverAddress":
+        setreceiverAddress(value)
         break;
 
-      case "dataTwo":
-        setDataTwo(value)
+      case "certificateTextPhrase":
+        setcertificateTextPhrase(value)
         break;
 
-      case "dataThree":
-        setDataThree(value)
+      case "certificateDescription":
+        setcertificateDescription(value)
         break;
 
       default:
@@ -170,9 +170,13 @@ function App() {
       return;
     }
     const rpc = new RPC(provider);
-    const contractAddress = await rpc.mintCertificate(dataOne, dataTwo, dataThree);
+
+    var response = await axios.get('/api/ipfs-upload-image',
+                {params: { certificateName: "Certificate", receiverAddress: receiverAddress, certificateTextPhrase: certificateTextPhrase, certificateDescription: certificateDescription }});
+    const contractAddress = await rpc.mintCertificate(receiverAddress, response.data);
     setMintCertificate(!mintCertificatePop)
-    // uiConsole(dataOne,dataTwo,dataThree);
+    
+    // uiConsole(receiverAddress,certificateTextPhrase,certificateDescription);
     uiConsole(contractAddress);
   }
 
@@ -204,12 +208,6 @@ function App() {
 
   const ipfsUploadImage = async () => {
     var response = await axios.get('/api/ipfs-upload-image');
-    uiConsole(response);
-    return;
-  };
-
-  const ipfsUploadMetadata = async () => {
-    var response = await axios.get('/api/ipfs-upload-metadata');
     uiConsole(response);
     return;
   };
@@ -407,7 +405,11 @@ function App() {
     if (el) {
       var htmltable = "<table><thead><tr><th>Token Address</th><th>Name</th><th>Block Number</th><th>Image</th></tr></thead><tbody>"
       for (let val in args[0]) {
-        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].name + " </td><td> " + args[0][val].blockNumber + " </td><td><img src='https://ipfs.io/ipfs/" + args[0][val].metadata.image + "' height=120 width=120/></td></tr>";
+        var imgSrc = "https://commons.wikimedia.org/w/index.php?lang=en&title=File%3ANo_image_available.svg#/media/File:No_image_available.svg";
+        if(args[0][val].metadata){
+          imgSrc = "https://ipfs.io/ipfs/" + args[0][val].metadata.image;
+        }
+        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].name + " </td><td> " + args[0][val].blockNumber + " </td><td><img src='" + imgSrc + "' height=120 width=120/></td></tr>";
       }
 
       htmltable += "</tbody></table>";
@@ -446,12 +448,7 @@ function App() {
 
         <div>
           <button onClick={() => handleButtonClick('mintCert', 1)} className={activeIndex === 1 ? "active" : "button"}>
-            Mint Certificate
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleButtonClick('mintCertificate', 2)} className={activeIndex === 2 ? "active" : "button"}>
-            Issue Certificate to Employee
+            Issue Certificate
           </button>
         </div>
         <div>
@@ -514,7 +511,7 @@ function App() {
               setMintCertificate(false);
             }}
             show={mintCertificatePop}
-            title="Mint Certificate"
+            title="Issue Certificate"
             onchange={onChange}
             onsubmit={onSubmit}
           ></CustomPopUp>

@@ -30,6 +30,7 @@ function App() {
 
   //form data
   const [receiverAddress, setreceiverAddress] = useState("")
+  const [certName, setcertName] = useState("")
   const [certificateTextPhrase, setcertificateTextPhrase] = useState("")
   const [certificateDescription, setcertificateDescription] = useState("")
   const [mintCertificatePop, setMintCertificate] = useState(false)
@@ -151,6 +152,10 @@ function App() {
         setreceiverAddress(value)
         break;
 
+        case "certName":
+          setcertName(value)
+          break;
+
       case "certificateTextPhrase":
         setcertificateTextPhrase(value)
         break;
@@ -164,6 +169,18 @@ function App() {
     }
   };
 
+  
+  const onGenerate = async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    //const rpc = new RPC(provider);
+
+    var response = await axios.get('/api/ai-generate-img', {params: { certificateTextPhrase: certificateTextPhrase }});
+    uiConsole(certificateTextPhrase);
+  }
+
   const onSubmit = async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -172,7 +189,7 @@ function App() {
     const rpc = new RPC(provider);
 
     var response = await axios.get('/api/ipfs-upload-image',
-                {params: { certificateName: "Certificate", receiverAddress: receiverAddress, certificateTextPhrase: certificateTextPhrase, certificateDescription: certificateDescription }});
+                {params: { certificateName: certName, receiverAddress: receiverAddress, certificateTextPhrase: certificateTextPhrase, certificateDescription: certificateDescription }});
     const contractAddress = await rpc.mintCertificate(receiverAddress, response.data);
     setMintCertificate(!mintCertificatePop)
     
@@ -457,26 +474,6 @@ function App() {
           </button>
         </div>
         <div>
-          <button onClick={() => handleButtonClick('authenticateUser', 4)} className={activeIndex === 4 ? "active" : "button"}>
-            Get ID Token
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleButtonClick('getChainId', 5)} className={activeIndex === 5 ? "active" : "button"}>
-            Get Chain ID
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleButtonClick('getAccounts', 6)} className={activeIndex === 6 ? "active" : "button"}>
-            Get Accounts
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleButtonClick('getBalance', 7)} className={activeIndex === 7 ? "active" : "button"}>
-            Get Balance
-          </button>
-        </div>
-        <div>
           <button onClick={() => handleButtonClick('logout', 8)} className={activeIndex === 8 ? "active" : "logout"} style={{ backgroundColor: "red" }}>
             Log Out
           </button>
@@ -490,22 +487,25 @@ function App() {
 
   const unloggedInView = (
     <div className="div-center">
-      <button onClick={login}>
-        <b>Login</b>
+      <button className="login-button" onClick={login} >
+        <img src="metamask.png" height="60px" width="60px" />
+        <br/>
+        Login with Metamask
       </button>
     </div>
   );
 
   return (
-    <div className="container">
-      <div className="card-layer">
-        <h1 className="title">
-          Professional Digital Wallet Demo
-        </h1>
-
-        <div className="grid">{provider ? loggedInView : unloggedInView}</div>
-
-        {provider && mintCertificatePop && (
+    <div>
+      <div className="header">
+        <h5 className="title" align="left">
+            Professional Digital Wallet Demo
+        </h5>
+      </div>
+      <div className="container">
+        <div className="card-layer">
+          <div className="grid">{provider ? loggedInView : unloggedInView}</div>
+          {provider && mintCertificatePop && (
           <CustomPopUp
             onClose={() => {
               setMintCertificate(false);
@@ -514,8 +514,11 @@ function App() {
             title="Issue Certificate"
             onchange={onChange}
             onsubmit={onSubmit}
+            onGenerate={onGenerate}
           ></CustomPopUp>
-        )}
+          )
+          }
+        </div>
       </div>
     </div>
   );

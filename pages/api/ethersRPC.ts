@@ -705,9 +705,9 @@ export default class EthereumRpc {
       const response = await myContract.safeMint(receiverAddress,"ipfs://" + metadataHash);
       //const response = "";
 
-      return {smartContractAddress: SmartContractAddress,from: address, to: walletAddress, contract: response};
+      return {status: "Success!!"};
     } catch (error) {
-      return error as string;
+      return error.reason as string;
     }
   }
 }

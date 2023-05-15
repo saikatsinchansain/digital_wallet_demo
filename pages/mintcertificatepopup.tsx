@@ -1,9 +1,16 @@
 import { Children, useEffect, useState } from "react";
+import { Form, Row, Col, Button, Table } from 'react-bootstrap';
+import defaultImage from '../public/metamask.png';
 import PropTypes from "prop-types";
-const CustomPopup = (props:any) => {
+const CustomPopup = (props: any) => {
   const [show, setShow] = useState(false);
-  const {onsubmit,onchange,onGenerate}= props
-  const closeHandler = (e:any) => {
+  const [image, setImage] = useState(defaultImage.src);
+  const [showFields, setShowFields] = useState(false);
+  const [showAccept, setAccept] = useState(true);
+  const [showGenerate, setGenerate] = useState(true);
+
+  const { onsubmit, onchange, onGenerate } = props
+  const closeHandler = (e: any) => {
     setShow(false);
     props.onClose(false);
   };
@@ -22,40 +29,100 @@ const CustomPopup = (props:any) => {
     >
       <div className="popup">
         <div className="pop-header">
-        <h2>{props.title}</h2>
-        <span className="close" onClick={closeHandler}>
-          &times;
-        </span>
+          <h2>{props.title}</h2>
+          <span className="close" onClick={closeHandler}>
+            &times;
+          </span>
         </div>
         <div className="content">
-        <div className="container-flex">
-          <table className="noBorder">
-          <tr>
-              <td className="form-label"><label className="mint-label">Name of Certificate : </label></td>
-              <td className="form-input"><input className="mint-input" onChange={(evt)=>{onchange("certName",evt)}} type="text" /></td>
-            </tr>
-            <tr>
-              <td className="form-label"><label className="mint-label">Recipient Address : </label></td>
-              <td className="form-input"><input className="mint-input" onChange={(evt)=>{onchange("receiverAddress",evt)}} type="text" /></td>
-            </tr>
-            <tr>
-              <td className="form-label"><label className="mint-label">Certificate Text:</label></td>
-              <td className="form-input">
-                <input className="mint-input-description" onChange={(evt)=>{onchange("certificateTextPhrase",evt)}} type="text" />
-                <button className="submit-button" onClick={()=>{onGenerate()}}>Generate Image</button>
-              </td>
-            </tr> 
-            <tr>
-              <td className="form-label"><label className="mint-label">Description :</label></td>
-              <td className="form-input"><input className="mint-input" onChange={(evt)=>{onchange("certificateDescription",evt)}} type="text" /></td>
-            </tr>
-            <tr>
-              <td colSpan={2} className="form-label"><img src="dummy.png" height="120" width="120"/></td>
-            </tr>    
-        </table>
-        
-      <button className="submit-button" onClick={()=>{onsubmit()}}>Submit</button>
-    </div>
+          <div className="container">
+            <Form>
+              {!showFields && (
+                <>
+                  <Row className="mb-3">
+                    <Form.Group as={Col} xs={12} controlId="Certificate Text">
+                      <Form.Label>Certificate Text</Form.Label>
+                      <Form.Control as="textarea" rows={3} placeholder="Enter Certificate Text" onChange={(evt) => { onchange("certificateTextPhrase", evt) }} />
+                    </Form.Group>
+                  </Row>
+                  <Row className="mb-3">
+                    <img src={image} alt="Preview" style={{ marginTop: '10px', maxWidth: '200px' }} />
+                  </Row>
+                  {showGenerate && (
+                    <>
+                      <Row className="mb-3" style={{ marginRight: 10, marginLeft: 10 }}>
+                        <Button variant="primary" type="button" onClick={() => { onGenerate() }} className="btn btn-sm">
+                          Generate Image
+                        </Button>
+                      </Row>
+                    </>
+                  )}
+                  {showAccept && (
+                    <>
+                      <Row className="mb-3" style={{ marginRight: 10, marginLeft: 10 }}>
+                        <Button variant="primary" type="button" onClick={() => { setShowFields(true) }} className="btn btn-sm" style={{ width: '49%' }}>
+                          Accept
+                        </Button>
+                        <Button variant="danger" type="button" onClick={() => { setShowFields(false) }} className="btn btn-sm" style={{ width: '49%' }}>
+                          Reject
+                        </Button>
+                      </Row>
+                    </>
+                  )}
+                </>
+              )}
+              {showFields && (
+                <>
+                  <Row className="mb-3">
+                    <Form.Group as={Col} xs={12} controlId="Name of Certificate">
+                      <Form.Label>Name of Certificate</Form.Label>
+                      <Form.Control type="text" placeholder="Enter Name of Certificate" onChange={(evt) => { onchange("certName", evt) }} />
+                    </Form.Group>
+                  </Row>
+                  <Row className="mb-3">
+                    <Form.Group as={Col} xs={12} controlId="Recipient Address">
+                      <Form.Label>Recipient Address</Form.Label>
+                      <Form.Control type="text" placeholder="Enter Recipient Address" onChange={(evt) => { onchange("receiverAddress", evt) }} />
+                    </Form.Group>
+                  </Row>
+                  <Row className="mb-3">
+                    <Form.Group as={Col} xs={12} controlId="Description">
+                      <Form.Label>Description</Form.Label>
+                      <Form.Control as="textarea" rows={3} placeholder="Enter Description" onChange={(evt) => { onchange("certificateDescription", evt) }} />
+                    </Form.Group>
+                  </Row>
+                  <Button variant="primary" type="button" onClick={() => { onsubmit() }}>
+                    Submit
+                  </Button>
+                </>
+              )}
+            </Form>
+            {/* <Table striped bordered hover >
+              <tr>
+                <td className="form-label"><label className="mint-label">Name of Certificate : </label></td>
+                <td className="form-input"><input className="mint-input" onChange={(evt) => { onchange("certName", evt) }} type="text" /></td>
+              </tr>
+              <tr>
+                <td className="form-label"><label className="mint-label">Recipient Address : </label></td>
+                <td className="form-input"><input className="mint-input" onChange={(evt) => { onchange("receiverAddress", evt) }} type="text" /></td>
+              </tr>
+              <tr>
+                <td className="form-label"><label className="mint-label">Certificate Text:</label></td>
+                <td className="form-input">
+                  <input className="mint-input-description" onChange={(evt) => { onchange("certificateTextPhrase", evt) }} type="text" />
+                  <button className="submit-button" onClick={() => { onGenerate() }}>Generate Image</button>
+                </td>
+              </tr>
+              <tr>
+                <td className="form-label"><label className="mint-label">Description :</label></td>
+                <td className="form-input"><input className="mint-input" onChange={(evt) => { onchange("certificateDescription", evt) }} type="text" /></td>
+              </tr>
+              <tr>
+                <td colSpan={2} className="form-label"><img src="dummy.png" alt="NFT Image" height="120" width="120" /></td>
+              </tr>
+            </Table>
+            <button className="submit-button" onClick={() => { onsubmit() }}>Submit</button>*/}
+          </div>
         </div>
       </div>
     </div>

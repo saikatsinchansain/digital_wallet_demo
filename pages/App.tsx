@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-shadow */
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Row, Col, Navbar, Nav, Form, Button, Table, Modal } from 'react-bootstrap';
+
 import { CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import { Web3Auth } from "@web3auth/modal";
@@ -27,6 +30,7 @@ function App() {
   const [torusPlugin, setTorusPlugin] = useState<TorusWalletConnectorPlugin | null>(null);
   const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [showModal, setShowModal] = useState(false);
 
   //form data
   const [receiverAddress, setreceiverAddress] = useState("")
@@ -35,6 +39,14 @@ function App() {
   const [certificateDescription, setcertificateDescription] = useState("")
   const [mintCertificatePop, setMintCertificate] = useState(false)
   const ref = useRef(null);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -152,9 +164,9 @@ function App() {
         setreceiverAddress(value)
         break;
 
-        case "certName":
-          setcertName(value)
-          break;
+      case "certName":
+        setcertName(value)
+        break;
 
       case "certificateTextPhrase":
         setcertificateTextPhrase(value)
@@ -169,7 +181,7 @@ function App() {
     }
   };
 
-  
+
   const onGenerate = async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -177,7 +189,7 @@ function App() {
     }
     //const rpc = new RPC(provider);
 
-    var response = await axios.get('/api/ai-generate-img', {params: { certificateTextPhrase: certificateTextPhrase }});
+    var response = await axios.get('/api/ai-generate-img', { params: { certificateTextPhrase: certificateTextPhrase } });
     uiConsole(certificateTextPhrase);
   }
 
@@ -189,10 +201,10 @@ function App() {
     const rpc = new RPC(provider);
 
     var response = await axios.get('/api/ipfs-upload-image',
-                {params: { certificateName: certName, receiverAddress: receiverAddress, certificateTextPhrase: certificateTextPhrase, certificateDescription: certificateDescription }});
+      { params: { certificateName: certName, receiverAddress: receiverAddress, certificateTextPhrase: certificateTextPhrase, certificateDescription: certificateDescription } });
     const contractAddress = await rpc.mintCertificate(receiverAddress, response.data);
     setMintCertificate(!mintCertificatePop)
-    
+
     // uiConsole(receiverAddress,certificateTextPhrase,certificateDescription);
     uiConsole(contractAddress);
   }
@@ -400,7 +412,7 @@ function App() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function uiConsole(...args: any[]): void {
-    const el = document.querySelector("#console>p");
+    const el = document.querySelector("#console");
     if (el) {
       //el.innerHTML = JSON.stringify(args || {}, null, 1);
       const stringValue = JSON.stringify(args);
@@ -417,19 +429,19 @@ function App() {
   }
 
   function displayCards(...args: any[]): void {
-    const el = document.querySelector("#console>p");
+    const el = document.querySelector("#console");
 
     if (el) {
-      var htmltable = "<table><thead><tr><th>Token Address</th><th>Name</th><th>Block Number</th><th>Image</th></tr></thead><tbody>"
+      var htmltable = "<Table striped bordered hover><thead><tr><th>Token Address</th><th>Name</th><th>Block Number</th><th>Image</th></tr></thead><tbody>"
       for (let val in args[0]) {
         var imgSrc = "https://commons.wikimedia.org/w/index.php?lang=en&title=File%3ANo_image_available.svg#/media/File:No_image_available.svg";
-        if(args[0][val].metadata){
+        if (args[0][val].metadata) {
           imgSrc = "https://ipfs.io/ipfs/" + args[0][val].metadata.image;
         }
         htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].name + " </td><td> " + args[0][val].blockNumber + " </td><td><img src='" + imgSrc + "' height=120 width=120/></td></tr>";
       }
 
-      htmltable += "</tbody></table>";
+      htmltable += "</tbody></Table>";
       el.innerHTML = htmltable;
       // el.innerHTML = JSON.stringify(args[0]);
       // mytable += "contractType: " + token + "</br>";
@@ -461,7 +473,26 @@ function App() {
 
   const loggedInView = (
     <>
-      <div className="flex-container">
+      <Navbar style={{ backgroundColor: "#95B1CC", borderColor: "#87CEEB" }} variant="dark">
+        <Container fluid>
+          <Navbar.Brand style={{ color: "#FFF", fontWeight: "bold" }}>Professional Digital Wallet Demo</Navbar.Brand>
+          <Button variant="primary" onClick={() => handleButtonClick('logout', 3)} className={activeIndex === 3 ? "btn btn-danger btn-sm" : "btn btn-danger btn-sm"} style={{ maxHeight: 40 }}>Log Out</Button>
+        </Container>
+      </Navbar>
+      <Container fluid className="vh-100">
+        <Row className="h-100">
+          <Col md={2} className="bg-light">
+            <Nav className="flex-column d-flex align-items-center">
+              <button onClick={() => handleButtonClick('mintCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Certificate</button>
+              <button onClick={() => handleButtonClick('listOwneredNFT', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>List Owned NFT</button>
+            </Nav>
+          </Col>
+          <Col md={10}>
+            <div id="console"></div>
+          </Col>
+        </Row>
+      </Container>
+      {/* <div className="flex-container">
 
         <div>
           <button onClick={() => handleButtonClick('mintCert', 1)} className={activeIndex === 1 ? "active" : "button"}>
@@ -481,46 +512,134 @@ function App() {
       </div>
       <div id="console" style={{ whiteSpace: "pre-line" }}>
         <p></p>
-      </div>
+      </div> */}
     </>
   );
 
   const unloggedInView = (
-    <div className="div-center">
-      <button className="login-button" onClick={login} >
-        <img src="metamask.png" height="60px" width="60px" />
-        <br/>
-        Login with Metamask
-      </button>
-    </div>
+
+    <div
+      style={{
+        backgroundImage: "url('https://images.unsplash.com/photo-1669060475985-e72f27a63241?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1032&q=80')",
+        backgroundSize: "cover",
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <Container className="bg-light p-5 rounded" style={{ opacity: 0.9 }}>
+        <img
+          src="/metamask.png"
+          alt="Logo"
+          className="mx-auto d-block mb-4"
+          style={{ maxWidth: "150px" }}
+        />
+        <center>
+          <h2 style={{ color: "#333" }}>Welcome</h2>
+          <h4 style={{ color: "#666" }}>Professional Digital Wallet</h4>
+        </center>
+        <Form style={{ marginTop: 20 }}>
+          <Button variant="primary" type="button" className="d-block mx-auto" onClick={login}>
+            Login
+          </Button>
+        </Form>
+      </Container >
+    </div >
+
+    // <div className="div-center">
+    //   <button className="login-button" onClick={login} >
+    //     <img src="metamask.png" alt="Metamask" height="60px" width="60px" />
+    //     <br />
+    //     Login with Metamask
+    //   </button>
+    // </div>
   );
 
+  // return (
+  //   <>
+  //     <header className="bg-success text-white py-3">
+  //       <Container>
+  //         <Row>
+  //           <Col>
+  //             <h4>Professional Digital Wallet Demo</h4>
+  //           </Col>
+  //           <Col className="text-end">
+  //             <button className="btn btn-secondary">Sign In</button>
+  //           </Col>
+  //           {/* <Col className="text-end">
+  //             <button className="btn btn-secondary">Sign In</button>
+  //           </Col> */}
+  //         </Row>
+  //       </Container>
+  //     </header>
+  //     <div className="container-fluid">
+  //       <Row>
+  //         <Col
+  //           md={3}
+  //           className={`sidebar bg-dark text-white py-3 open`}
+  //         >
+  //           <nav>
+  //             <ul className="nav flex-column">
+  //               <li className="nav-item">
+  //                 <div className="nav-link">
+  //                   <i className="bi bi-house"></i> Home
+  //                 </div>
+  //               </li>
+  //               <li className="nav-item">
+  //                 <div className="nav-link">
+  //                   <i className="bi bi-info-circle"></i> About
+  //                 </div>
+  //               </li>
+  //             </ul>
+  //           </nav>
+  //         </Col>
+  //         <Col md={9} className="bg-light py-3">
+  //           <main className="p-4">
+  //             <div className="container">
+  //               <div className="card-layer">
+  //                 <div className="grid">{provider ? loggedInView : unloggedInView}</div>
+  //                 {provider && mintCertificatePop && (
+  //                   <CustomPopUp
+  //                     onClose={() => {
+  //                       setMintCertificate(false);
+  //                     }}
+  //                     show={mintCertificatePop}
+  //                     title="Issue Certificate"
+  //                     onchange={onChange}
+  //                     onsubmit={onSubmit}
+  //                     onGenerate={onGenerate}
+  //                   ></CustomPopUp>
+  //                 )
+  //                 }
+  //               </div>
+  //             </div>
+  //           </main>
+  //         </Col>
+  //       </Row>
+
+  //     </div>
+  //   </>
+  // );
+
   return (
-    <div>
-      <div className="header">
-        <h5 className="title" align="left">
-            Professional Digital Wallet Demo
-        </h5>
-      </div>
-      <div className="container">
-        <div className="card-layer">
-          <div className="grid">{provider ? loggedInView : unloggedInView}</div>
-          {provider && mintCertificatePop && (
-          <CustomPopUp
-            onClose={() => {
-              setMintCertificate(false);
-            }}
-            show={mintCertificatePop}
-            title="Issue Certificate"
-            onchange={onChange}
-            onsubmit={onSubmit}
-            onGenerate={onGenerate}
-          ></CustomPopUp>
-          )
-          }
-        </div>
-      </div>
-    </div>
+    <>
+      <div>
+        {provider ? loggedInView : unloggedInView}</div>
+      {provider && mintCertificatePop && (
+        <CustomPopUp
+          onClose={() => {
+            setMintCertificate(false);
+          }}
+          show={mintCertificatePop}
+          title="Issue Certificate"
+          onchange={onChange}
+          onsubmit={onSubmit}
+          onGenerate={onGenerate}
+        ></CustomPopUp>
+      )
+      }
+
+    </>
   );
 }
 

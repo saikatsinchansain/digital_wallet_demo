@@ -555,7 +555,7 @@ function App() {
         <Row className="h-100">
           <Col md={2} className="bg-light">
             <Nav className="flex-column d-flex align-items-center">
-            <button onClick={() => handleButtonClick('enlistCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Enlist new Certificate</button>
+            <button onClick={() => handleButtonClick('enlistCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Enlist Cert</button>
               <button onClick={() => handleButtonClick('mintCert', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Certificate</button>
               <button onClick={() => handleButtonClick('listOwneredNFT', 3)} className={activeIndex === 3 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>List Owned NFT</button>
               <button onClick={() => handleButtonClick('getAccounts', 4)} className={activeIndex === 4 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>View Account</button>

@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { SafeEventEmitterProvider } from "@web3auth/base";
 import Web3 from "web3";
+const SmartContractABI  = require('./contract/CertificationTokenABI.json');
+const SmartContractBytecode = require('./contract/CertificateTokenByteCode.json');
+
 
 export default class EthereumRpc {
   private provider: SafeEventEmitterProvider;
@@ -111,5 +114,64 @@ export default class EthereumRpc {
     } catch (error) {
       return error as string;
     }
+  }
+
+  async mintCertificate(receiverAddress: string, metadataHash: string): Promise<any> {
+    try {
+      //const ethersProvider = new ethers.providers.Web3Provider(this.provider);
+      //const signer = ethersProvider.getSigner();
+      const web3 = new Web3(this.provider as any);
+      const walletAddress = (await web3.eth.getAccounts())[0];
+      console.log("Wallet Address:" + walletAddress);
+      const contractAddress = "0x9CdeF76f31B4E1950D29D9238C93c52d77144e9C";
+      
+      // Load Smart contract ether js
+      // const myContract = new ethers.Contract(contractAddress, SmartContractABI, signer);
+      // Logic to fetch smart contract name
+      //const response = await myContract.name();
+      // Load smart contract web3js
+      
+      const contract = new web3.eth.Contract(SmartContractABI,contractAddress.toLowerCase());
+      // var err,data = await contract.methods.name().call({from: walletAddress, gas: 4700000});
+      var err,data = await contract.methods.owner().call({from: walletAddress, gas: 4700000});
+      
+      if(err){
+        console.log("Error: " + err);
+      }else{
+        console.log("Contract Owner: " + data);
+      }
+      
+      //Logic to perform safeMint
+      console.log("Receiver Address: " + receiverAddress);
+      var err,txHash = await contract.methods.safeMint(receiverAddress,"ipfs://" + metadataHash).send({from: walletAddress.toLowerCase(), gas: 4700000});
+      
+      return "Success";
+    } catch (error) {
+      return error.reason as string;
+    }
+  }
+
+  async enlistCertificate(): Promise<any> {
+    const web3 = new Web3(this.provider as any);
+    const walletAddress = (await web3.eth.getAccounts())[0];
+    console.log("Wallet Address:" + walletAddress);
+    // Logic to deploy smart contract webjs
+    const contract_deployer = new web3.eth.Contract(SmartContractABI);
+    var contractAddress;
+    await contract_deployer.deploy({data: SmartContractBytecode.data}).send({from: walletAddress, gas: 4700000},(err, transactionHash) => 
+      {
+        if(err)
+          console.log('Error :', err);
+        else  
+          console.log('Transaction Hash :', transactionHash);
+      }
+      ).on('confirmation', () => {}).then((newContractInstance) => 
+      {
+        contractAddress=newContractInstance.options.address;
+        console.log('Deployed Contract Address : ', newContractInstance.options.address);
+      }
+      );
+    return "New contract address: " + contractAddress;
+
   }
 }

@@ -4,25 +4,30 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Navbar, Nav, Form, Button, Table, Modal } from 'react-bootstrap';
 
-import { CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
+import { CHAIN_NAMESPACES, SafeEventEmitterProvider, WALLET_ADAPTERS } from "@web3auth/base";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import { Web3Auth } from "@web3auth/modal";
 import { TorusWalletAdapter } from "@web3auth/torus-evm-adapter";
+import QRCodeModal from "@walletconnect/qrcode-modal";
 import CustomPopUp from "./MintCertificatePopUp"
 import RPC from "./api/ethersRPC"; // for using ethers.js
+import webRPC from "./api/web3RPC";
+import { Web3AuthNoModal } from "@web3auth/no-modal";
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 // Plugins
 import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
 // Adapters
-import { WalletConnectV1Adapter } from "@web3auth/wallet-connect-v1-adapter";
+import { WalletConnectV2Adapter, getWalletConnectV2Settings } from "@web3auth/wallet-connect-v2-adapter";
 import { useEffect, useState, useRef } from "react";
 
 //import RPC from "./api/web3RPC"; // for using web3.js
 import axios from "axios";
-import { ethers } from "ethers";
+//import { ethers } from "ethers";
 import Moralis from "./api/moralis";
-import { memoryUsage } from "process";
+//import { memoryUsage } from "process";
 
-const clientId = "BEglQSgt4cUWcj6SKRdu5QkOXTsePmMcusG5EAoyjyOYKlVRjIF1iCNnMOTfpzCiunHRrMui8TIwQPXdkQ8Yxuk"; // get from https://dashboard.web3auth.io
+
+const clientId = "BMzJCEsDlTSQu0984cnmm0rsVS8AX59rfFUrOXSy0LLAKcp9oMBu3TtuF9ymnFm2T30z--vPvIthrYOi5-vgE5E"; // get from https://dashboard.web3auth.io
 
 
 function App() {
@@ -50,66 +55,101 @@ function App() {
 
   useEffect(() => {
     const init = async () => {
+      // try {
+      //   const web3auth = new Web3Auth({
+      //     clientId,
+      //     chainConfig: {
+      //       chainNamespace: CHAIN_NAMESPACES.EIP155,
+      //       chainId: "0x1",
+      //       rpcTarget: "https://rpc.ankr.com/eth", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+      //     },
+      //     web3AuthNetwork: "cyan",
+      //   });
+
+      //   // plugins and adapters are optional and can be added as per your requirement
+      //   // read more about plugins here: https://web3auth.io/docs/sdk/web/plugins/
+
+      //   // adding torus wallet connector plugin
+
+      //   const torusPlugin = new TorusWalletConnectorPlugin({
+      //     torusWalletOpts: {},
+      //     walletInitOptions: {
+      //       whiteLabel: {
+      //         theme: { isDark: true, colors: { primary: "#00a8ff" } },
+      //         logoDark: "https://web3auth.io/images/w3a-L-Favicon-1.svg",
+      //         logoLight: "https://web3auth.io/images/w3a-D-Favicon-1.svg",
+      //       },
+      //       useWalletConnect: true,
+      //       enableLogging: true,
+      //     },
+      //   });
+      //   setTorusPlugin(torusPlugin);
+      //   await web3auth.addPlugin(torusPlugin);
+
+      //   // read more about adapters here: https://web3auth.io/docs/sdk/web/adapters/
+
+      //   // adding wallet connect v1 adapter
+
+      //   const walletConnectV2Adapter = new WalletConnectV2Adapter({
+      //     adapterSettings: {
+      //       bridge: "https://bridge.walletconnect.org",
+      //     },
+      //     clientId,
+      //   });
+
+      //   web3auth.configureAdapter(walletConnectV2Adapter);
+
+      //   // adding metamask adapter
+
+      //   const metamaskAdapter = new MetamaskAdapter({
+      //     clientId,
+      //     sessionTime: 3600, // 1 hour in seconds
+      //     web3AuthNetwork: "cyan",
+      //     chainConfig: {
+      //       chainNamespace: CHAIN_NAMESPACES.EIP155,
+      //       chainId: "0x1",
+      //       rpcTarget: "https://rpc.ankr.com/eth", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+      //     },
+      //   });
+      //   // we can change the above settings using this function
+      //   metamaskAdapter.setAdapterSettings({
+      //     sessionTime: 86400, // 1 day in seconds
+      //     web3AuthNetwork: "cyan",
+      //     chainConfig: {
+      //       chainNamespace: CHAIN_NAMESPACES.EIP155,
+      //       chainId: "0x13881",
+      //       rpcTarget: "https://matic-mumbai.chainstacklabs.com", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+      //       blockExplorer: "https://mumbai.polygonscan.com/",
+      //       displayName: "Polygon Mumbai Testnet",
+      //       ticker: "MATIC",
+      //       tickerName: "Matic",
+      //     }
+      //   });
+
+      //   // it will add/update  the metamask adapter in to web3auth class
+      //   web3auth.configureAdapter(metamaskAdapter);
+
+      //   const torusWalletAdapter = new TorusWalletAdapter({
+      //     clientId,
+      //   });
+
+      //   // it will add/update  the torus-evm adapter in to web3auth class
+      //   web3auth.configureAdapter(torusWalletAdapter);
+
+      //   setWeb3auth(web3auth);
+
+      //   await web3auth.initModal();
+      //   if (web3auth.provider) {
+      //     setProvider(web3auth.provider);
+      //   }
+      // } catch (error) {
+      //   console.error(error);
+      // }
+      
+      // Non Modal
       try {
-        const web3auth = new Web3Auth({
+        const web3auth = new Web3AuthNoModal({
           clientId,
-          chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId: "0x1",
-            rpcTarget: "https://rpc.ankr.com/eth", // This is the public RPC we have added, please pass on your own endpoint while creating an app
-          },
-          web3AuthNetwork: "cyan",
-        });
-
-        // plugins and adapters are optional and can be added as per your requirement
-        // read more about plugins here: https://web3auth.io/docs/sdk/web/plugins/
-
-        // adding torus wallet connector plugin
-
-        const torusPlugin = new TorusWalletConnectorPlugin({
-          torusWalletOpts: {},
-          walletInitOptions: {
-            whiteLabel: {
-              theme: { isDark: true, colors: { primary: "#00a8ff" } },
-              logoDark: "https://web3auth.io/images/w3a-L-Favicon-1.svg",
-              logoLight: "https://web3auth.io/images/w3a-D-Favicon-1.svg",
-            },
-            useWalletConnect: true,
-            enableLogging: true,
-          },
-        });
-        setTorusPlugin(torusPlugin);
-        await web3auth.addPlugin(torusPlugin);
-
-        // read more about adapters here: https://web3auth.io/docs/sdk/web/adapters/
-
-        // adding wallet connect v1 adapter
-
-        const walletConnectV1Adapter = new WalletConnectV1Adapter({
-          adapterSettings: {
-            bridge: "https://bridge.walletconnect.org",
-          },
-          clientId,
-        });
-
-        web3auth.configureAdapter(walletConnectV1Adapter);
-
-        // adding metamask adapter
-
-        const metamaskAdapter = new MetamaskAdapter({
-          clientId,
-          sessionTime: 3600, // 1 hour in seconds
-          web3AuthNetwork: "cyan",
-          chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId: "0x1",
-            rpcTarget: "https://rpc.ankr.com/eth", // This is the public RPC we have added, please pass on your own endpoint while creating an app
-          },
-        });
-        // we can change the above settings using this function
-        metamaskAdapter.setAdapterSettings({
-          sessionTime: 86400, // 1 day in seconds
-          web3AuthNetwork: "cyan",
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
             chainId: "0x13881",
@@ -117,29 +157,33 @@ function App() {
             blockExplorer: "https://mumbai.polygonscan.com/",
             displayName: "Polygon Mumbai Testnet",
             ticker: "MATIC",
-            tickerName: "Matic",
-          }
+            tickerName: "Matic", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+          },
+          web3AuthNetwork: "cyan",
         });
-
-        // it will add/update  the metamask adapter in to web3auth class
-        web3auth.configureAdapter(metamaskAdapter);
-
-        const torusWalletAdapter = new TorusWalletAdapter({
-          clientId,
-        });
-
-        // it will add/update  the torus-evm adapter in to web3auth class
-        web3auth.configureAdapter(torusWalletAdapter);
 
         setWeb3auth(web3auth);
 
-        await web3auth.initModal();
+        const openloginAdapter = new OpenloginAdapter();
+        web3auth.configureAdapter(openloginAdapter);
+
+        // adding wallet connect v2 adapter
+        const defaultWcSettings = await getWalletConnectV2Settings("eip155", [1, 137, 5], "04309ed1007e77d1f119b85205bb779d")
+        const walletConnectV2Adapter = new WalletConnectV2Adapter({
+          adapterSettings: { qrcodeModal: QRCodeModal, ...defaultWcSettings.adapterSettings },
+          loginSettings: { ...defaultWcSettings.loginSettings },
+        });
+
+        web3auth.configureAdapter(walletConnectV2Adapter);
+
+        await web3auth.init();
         if (web3auth.provider) {
           setProvider(web3auth.provider);
         }
       } catch (error) {
         console.error(error);
       }
+
     };
 
     init();
@@ -156,6 +200,17 @@ function App() {
   const mintCert = async () => {
     setMintCertificate(!mintCertificatePop)
   };
+
+  const enlistCert = async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new webRPC(provider);
+    const contractAddress = await rpc.enlistCertificate();
+    uiConsole(contractAddress);
+    
+  }
 
   const onChange = (key: string, evt: any) => {
     let value = evt?.target?.value;
@@ -198,13 +253,14 @@ function App() {
       uiConsole("provider not initialized yet");
       return;
     }
-    const rpc = new RPC(provider);
+    const rpc = new webRPC(provider);
 
     var response = await axios.get('/api/ipfs-upload-image',
       { params: { certificateName: certName, receiverAddress: receiverAddress, certificateTextPhrase: certificateTextPhrase, certificateDescription: certificateDescription } });
+    console.log("Certificate Text Phrase: " + certificateTextPhrase + " Receiver:" + receiverAddress + " Certificate Description: " + certificateDescription );
     const contractAddress = await rpc.mintCertificate(receiverAddress, response.data);
     setMintCertificate(!mintCertificatePop)
-
+    console.log("Response: " + contractAddress);
     // uiConsole(receiverAddress,certificateTextPhrase,certificateDescription);
     uiConsole(contractAddress);
   }
@@ -249,6 +305,20 @@ function App() {
     const web3authProvider = await web3auth.connect();
     setProvider(web3authProvider);
     uiConsole("Logged in Successfully!");
+  };
+
+  const loginSocial = async () => {
+    if (!web3auth) {
+      uiConsole("web3auth not initialized yet");
+      return;
+    }
+    const web3authProvider = await web3auth.connectTo(
+      WALLET_ADAPTERS.OPENLOGIN,
+      {
+        loginProvider: "google",
+      }
+    );
+    setProvider(web3authProvider);
   };
 
   const authenticateUser = async () => {
@@ -317,7 +387,7 @@ function App() {
       uiConsole("provider not initialized yet");
       return;
     }
-    const rpc = new RPC(provider);
+    const rpc = new webRPC(provider);
     const response = await rpc.mintCertificate("", "", "");
     uiConsole(response);
   };
@@ -468,6 +538,8 @@ function App() {
       logout();
     } else if (params == "mintCert") {
       mintCert();
+    } else if(params == "enlistCert") {
+      enlistCert();
     }
   }
 
@@ -483,8 +555,10 @@ function App() {
         <Row className="h-100">
           <Col md={2} className="bg-light">
             <Nav className="flex-column d-flex align-items-center">
-              <button onClick={() => handleButtonClick('mintCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Certificate</button>
-              <button onClick={() => handleButtonClick('listOwneredNFT', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>List Owned NFT</button>
+            <button onClick={() => handleButtonClick('enlistCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Enlist new Certificate</button>
+              <button onClick={() => handleButtonClick('mintCert', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Certificate</button>
+              <button onClick={() => handleButtonClick('listOwneredNFT', 3)} className={activeIndex === 3 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>List Owned NFT</button>
+              <button onClick={() => handleButtonClick('getAccounts', 4)} className={activeIndex === 4 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>View Account</button>
             </Nav>
           </Col>
           <Col md={10}>
@@ -539,8 +613,12 @@ function App() {
           <h4 style={{ color: "#666" }}>Professional Digital Wallet</h4>
         </center>
         <Form style={{ marginTop: 20 }}>
-          <Button variant="primary" type="button" className="d-block mx-auto" onClick={login}>
-            Login
+          <Button type="button" className="d-block mx-auto" onClick={login}>
+            Login with Metamask
+          </Button>
+          <br />
+          <Button variant="primary" type="button" className="d-block mx-auto" onClick={loginSocial}>
+            Login with Google
           </Button>
         </Form>
       </Container >

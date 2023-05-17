@@ -425,10 +425,14 @@ function App() {
       var htmltable = "<Table striped bordered hover><thead><tr><th style='width:20%'>Credential ID</th><th style='width:40%'>Award</th><th style='width:40%'>Image</th></tr></thead><tbody>"
       for (let val in args[0]) {
         var imgSrc = "https://commons.wikimedia.org/w/index.php?lang=en&title=File%3ANo_image_available.svg#/media/File:No_image_available.svg";
+        var name = ""
+        var description = ""
         if (args[0][val].metadata) {
           imgSrc = "https://ipfs.io/ipfs/" + args[0][val].metadata.image;
+          name = args[0][val].metadata.name;
+          description = args[0][val].metadata.description;
         }
-        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].metadata.name + "<div style='font-size:12px'>" + args[0][val].metadata.description +  " </div></td><td><img src='" + imgSrc + "' height=120 width=120/></td></tr>";
+        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + name + "<div style='font-size:12px'>" + description +  " </div></td><td><img src='" + imgSrc + "' height=120 width=120/></td></tr>";
       }
 
       htmltable += "</tbody></Table>";

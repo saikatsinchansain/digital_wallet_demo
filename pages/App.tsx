@@ -56,7 +56,7 @@ function App() {
 
   useEffect(() => {
     getAccountsHidden().then((address) => {
-      address == "0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f" ? setAccount("Employee") : setAccount("Admin");
+      address == "0x8510058Fe800e457d9ed38032196e833AE65f58E" ? setAccount("Administrator") : setAccount("Employee");
     });
   })
 
@@ -356,7 +356,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const address = await rpc.getAccounts();
-    address=="0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f" ? setAccount("Employee") : setAccount("Admin");
+    address=="0x8510058Fe800e457d9ed38032196e833AE65f58E" ? setAccount("Administrator") : setAccount("Employee");
     return address;
   };
 
@@ -367,7 +367,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const address = await rpc.getAccounts();
-    address=="0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f" ? setAccount("Employee") : setAccount("Admin");
+    address=="0x8510058Fe800e457d9ed38032196e833AE65f58E" ? setAccount("Administrator") : setAccount("Employee");
     uiConsole(address);
     return address;
   };
@@ -492,12 +492,12 @@ function App() {
           <Col md={2} className="bg-light">
             <Nav className="flex-column d-flex align-items-center">
               {
-                myaccount=="Admin" && 
-                <button onClick={() => handleButtonClick('enlistCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Enlist Cert</button>
+                myaccount=="Administrator" && 
+                <button onClick={() => handleButtonClick('enlistCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Enlist Credential</button>
               }
               {
-                myaccount=="Admin" &&
-                <button onClick={() => handleButtonClick('mintCert', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Certificate</button>
+                myaccount=="Administrator" &&
+                <button onClick={() => handleButtonClick('mintCert', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Credential</button>
               }
               <button onClick={() => handleButtonClick('listOwneredNFT', 3)} className={activeIndex === 3 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>List Owned NFT</button>
               <button onClick={() => handleButtonClick('getAccounts', 4)} className={activeIndex === 4 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>View Account</button>

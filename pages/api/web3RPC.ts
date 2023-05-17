@@ -123,7 +123,7 @@ export default class EthereumRpc {
       const web3 = new Web3(this.provider as any);
       const walletAddress = (await web3.eth.getAccounts())[0];
       console.log("Wallet Address:" + walletAddress);
-      const contractAddress = "0x9CdeF76f31B4E1950D29D9238C93c52d77144e9C";
+      const contractAddress = "0xC7A0F59fc5785B42eC70fea46c3e4F379C131c1e";
       
       // Load Smart contract ether js
       // const myContract = new ethers.Contract(contractAddress, SmartContractABI, signer);

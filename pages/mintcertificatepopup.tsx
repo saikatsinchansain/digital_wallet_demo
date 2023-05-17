@@ -1,6 +1,6 @@
 import { Children, useEffect, useState } from "react";
 import { Form, Row, Col, Button, Table } from 'react-bootstrap';
-import defaultImage from '../public/metamask.png';
+import defaultImage from '../public/preview.png';
 import PropTypes from "prop-types";
 const CustomPopup = (props: any) => {
   const [show, setShow] = useState(false);
@@ -42,7 +42,7 @@ const CustomPopup = (props: any) => {
                   <Row className="mb-3">
                     <Form.Group as={Col} xs={12} controlId="Credential Text">
                       <Form.Label>Credential Text</Form.Label>
-                      <Form.Control as="textarea" rows={3} placeholder="Enter Credential Text" value="Employee of the Quarter" onChange={(evt) => { onchange("certificateTextPhrase", evt) }} />
+                      <Form.Control as="textarea" rows={3} placeholder="Employee of the Quarter" onChange={(evt) => { onchange("certificateTextPhrase", evt) }} />
                     </Form.Group>
                   </Row>
                   <Row className="mb-3">
@@ -76,19 +76,19 @@ const CustomPopup = (props: any) => {
                   <Row className="mb-3">
                     <Form.Group as={Col} xs={12} controlId="Name of Certificate">
                       <Form.Label>Credential</Form.Label>
-                      <Form.Control type="text" placeholder="Enter Credential" value="Congratulations" onChange={(evt) => { onchange("certName", evt) }} />
+                      <Form.Control type="text" placeholder="Congratulations" onChange={(evt) => { onchange("certName", evt) }} />
                     </Form.Group>
                   </Row>
                   <Row className="mb-3">
                     <Form.Group as={Col} xs={12} controlId="Recipient Address">
                       <Form.Label>Recipient Address</Form.Label>
-                      <Form.Control type="text" placeholder="Enter Recipient Address" value="0xb21Fb1fEEFcdc0DEd8Ae4de59519c248745F7aCF" onChange={(evt) => { onchange("receiverAddress", evt) }} />
+                      <Form.Control type="text" placeholder="0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f"  onChange={(evt) => { onchange("receiverAddress", evt) }} />
                     </Form.Group>
                   </Row>
                   <Row className="mb-3">
                     <Form.Group as={Col} xs={12} controlId="Description">
                       <Form.Label>Description</Form.Label>
-                      <Form.Control as="textarea" rows={3} placeholder="Enter Description" value="Congratulations on your incredible success! You set an amazing example for everyone at the company. Keep up the good work." onChange={(evt) => { onchange("certificateDescription", evt) }} />
+                      <Form.Control as="textarea" rows={3} placeholder="Congratulations on your incredible success! You set an amazing example for everyone at the company. Keep up the good work." onChange={(evt) => { onchange("certificateDescription", evt) }} />
                     </Form.Group>
                   </Row>
                   <Button variant="primary" type="button" onClick={() => { onsubmit() }}>

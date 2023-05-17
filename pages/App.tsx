@@ -55,7 +55,7 @@ function App() {
 
 
   useEffect(() => {
-    getAccounts().then((address) => {
+    getAccountsHidden().then((address) => {
       address == "0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f" ? setAccount("Employee") : setAccount("Admin");
     });
   })
@@ -162,7 +162,7 @@ function App() {
     }
     //const rpc = new RPC(provider);
 
-    var response = await axios.get('/api/ai-generate-img', { params: { certificateTextPhrase: certificateTextPhrase } });
+    //var response = await axios.get('/api/ai-generate-img', { params: { certificateTextPhrase: certificateTextPhrase } });
     uiConsole(certificateTextPhrase);
   }
 
@@ -173,9 +173,9 @@ function App() {
     }
     const rpc = new webRPC(provider);
 
+    console.log("Certificate Text Phrase: " + certName + " Receiver:" + receiverAddress + " Certificate Description: " + certificateDescription );
     var response = await axios.get('/api/ipfs-upload-image',
       { params: { certificateName: certName, receiverAddress: receiverAddress, certificateTextPhrase: certificateTextPhrase, certificateDescription: certificateDescription } });
-    console.log("Certificate Text Phrase: " + certificateTextPhrase + " Receiver:" + receiverAddress + " Certificate Description: " + certificateDescription );
     const contractAddress = await rpc.mintCertificate(receiverAddress, response.data);
     setMintCertificate(!mintCertificatePop)
     console.log("Response: " + contractAddress);
@@ -346,6 +346,18 @@ function App() {
     }
     await web3auth?.switchChain({ chainId: "0x5" });
     uiConsole("Chain Switched");
+  };
+
+  
+  const getAccountsHidden = async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const address = await rpc.getAccounts();
+    address=="0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f" ? setAccount("Employee") : setAccount("Admin");
+    return address;
   };
 
   const getAccounts = async () => {

@@ -29,13 +29,13 @@ import Moralis from "./api/moralis";
 
 const clientId = "BMzJCEsDlTSQu0984cnmm0rsVS8AX59rfFUrOXSy0LLAKcp9oMBu3TtuF9ymnFm2T30z--vPvIthrYOi5-vgE5E"; // get from https://dashboard.web3auth.io
 
-
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
   const [torusPlugin, setTorusPlugin] = useState<TorusWalletConnectorPlugin | null>(null);
   const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [showModal, setShowModal] = useState(false);
+  const [myaccount, setAccount] = useState("");
 
   //form data
   const [receiverAddress, setreceiverAddress] = useState("")
@@ -53,99 +53,15 @@ function App() {
     setShowModal(false);
   };
 
+
+  useEffect(() => {
+    getAccounts().then((address) => {
+      address == "0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f" ? setAccount("Employee") : setAccount("Admin");
+    });
+  })
+
   useEffect(() => {
     const init = async () => {
-      // try {
-      //   const web3auth = new Web3Auth({
-      //     clientId,
-      //     chainConfig: {
-      //       chainNamespace: CHAIN_NAMESPACES.EIP155,
-      //       chainId: "0x1",
-      //       rpcTarget: "https://rpc.ankr.com/eth", // This is the public RPC we have added, please pass on your own endpoint while creating an app
-      //     },
-      //     web3AuthNetwork: "cyan",
-      //   });
-
-      //   // plugins and adapters are optional and can be added as per your requirement
-      //   // read more about plugins here: https://web3auth.io/docs/sdk/web/plugins/
-
-      //   // adding torus wallet connector plugin
-
-      //   const torusPlugin = new TorusWalletConnectorPlugin({
-      //     torusWalletOpts: {},
-      //     walletInitOptions: {
-      //       whiteLabel: {
-      //         theme: { isDark: true, colors: { primary: "#00a8ff" } },
-      //         logoDark: "https://web3auth.io/images/w3a-L-Favicon-1.svg",
-      //         logoLight: "https://web3auth.io/images/w3a-D-Favicon-1.svg",
-      //       },
-      //       useWalletConnect: true,
-      //       enableLogging: true,
-      //     },
-      //   });
-      //   setTorusPlugin(torusPlugin);
-      //   await web3auth.addPlugin(torusPlugin);
-
-      //   // read more about adapters here: https://web3auth.io/docs/sdk/web/adapters/
-
-      //   // adding wallet connect v1 adapter
-
-      //   const walletConnectV2Adapter = new WalletConnectV2Adapter({
-      //     adapterSettings: {
-      //       bridge: "https://bridge.walletconnect.org",
-      //     },
-      //     clientId,
-      //   });
-
-      //   web3auth.configureAdapter(walletConnectV2Adapter);
-
-      //   // adding metamask adapter
-
-      //   const metamaskAdapter = new MetamaskAdapter({
-      //     clientId,
-      //     sessionTime: 3600, // 1 hour in seconds
-      //     web3AuthNetwork: "cyan",
-      //     chainConfig: {
-      //       chainNamespace: CHAIN_NAMESPACES.EIP155,
-      //       chainId: "0x1",
-      //       rpcTarget: "https://rpc.ankr.com/eth", // This is the public RPC we have added, please pass on your own endpoint while creating an app
-      //     },
-      //   });
-      //   // we can change the above settings using this function
-      //   metamaskAdapter.setAdapterSettings({
-      //     sessionTime: 86400, // 1 day in seconds
-      //     web3AuthNetwork: "cyan",
-      //     chainConfig: {
-      //       chainNamespace: CHAIN_NAMESPACES.EIP155,
-      //       chainId: "0x13881",
-      //       rpcTarget: "https://matic-mumbai.chainstacklabs.com", // This is the public RPC we have added, please pass on your own endpoint while creating an app
-      //       blockExplorer: "https://mumbai.polygonscan.com/",
-      //       displayName: "Polygon Mumbai Testnet",
-      //       ticker: "MATIC",
-      //       tickerName: "Matic",
-      //     }
-      //   });
-
-      //   // it will add/update  the metamask adapter in to web3auth class
-      //   web3auth.configureAdapter(metamaskAdapter);
-
-      //   const torusWalletAdapter = new TorusWalletAdapter({
-      //     clientId,
-      //   });
-
-      //   // it will add/update  the torus-evm adapter in to web3auth class
-      //   web3auth.configureAdapter(torusWalletAdapter);
-
-      //   setWeb3auth(web3auth);
-
-      //   await web3auth.initModal();
-      //   if (web3auth.provider) {
-      //     setProvider(web3auth.provider);
-      //   }
-      // } catch (error) {
-      //   console.error(error);
-      // }
-      
       // Non Modal
       try {
         const web3auth = new Web3AuthNoModal({
@@ -180,6 +96,7 @@ function App() {
         if (web3auth.provider) {
           setProvider(web3auth.provider);
         }
+        
       } catch (error) {
         console.error(error);
       }
@@ -187,6 +104,7 @@ function App() {
     };
 
     init();
+    
   }, []);
 
   const fetchPokemon = async () => {
@@ -437,7 +355,9 @@ function App() {
     }
     const rpc = new RPC(provider);
     const address = await rpc.getAccounts();
+    address=="0x9AEAD0F785298Ba2630C17651f6B7b75A1238C7f" ? setAccount("Employee") : setAccount("Admin");
     uiConsole(address);
+    return address;
   };
 
   const getBalance = async () => {
@@ -502,13 +422,13 @@ function App() {
     const el = document.querySelector("#console");
 
     if (el) {
-      var htmltable = "<Table striped bordered hover><thead><tr><th>Token Address</th><th>Name</th><th>Block Number</th><th>Image</th></tr></thead><tbody>"
+      var htmltable = "<Table striped bordered hover><thead><tr><th style='width:20%'>Credential ID</th><th style='width:40%'>Award</th><th style='width:40%'>Image</th></tr></thead><tbody>"
       for (let val in args[0]) {
         var imgSrc = "https://commons.wikimedia.org/w/index.php?lang=en&title=File%3ANo_image_available.svg#/media/File:No_image_available.svg";
         if (args[0][val].metadata) {
           imgSrc = "https://ipfs.io/ipfs/" + args[0][val].metadata.image;
         }
-        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].name + " </td><td> " + args[0][val].blockNumber + " </td><td><img src='" + imgSrc + "' height=120 width=120/></td></tr>";
+        htmltable += "<tr><td> " + args[0][val].tokenId + " </td><td> " + args[0][val].metadata.name + "<div style='font-size:12px'>" + args[0][val].metadata.description +  " </div></td><td><img src='" + imgSrc + "' height=120 width=120/></td></tr>";
       }
 
       htmltable += "</tbody></Table>";
@@ -545,9 +465,9 @@ function App() {
 
   const loggedInView = (
     <>
-      <Navbar style={{ backgroundColor: "#95B1CC", borderColor: "#87CEEB" }} variant="dark">
-        <Container fluid>
-          <Navbar.Brand style={{ color: "#FFF", fontWeight: "bold" }}>Professional Digital Wallet Demo</Navbar.Brand>
+      <Navbar style={{ backgroundColor: myaccount=="Employee"?"#95B1CC":"#95B1AA", borderColor: "#87CEEB" }} variant="dark">
+       <Container fluid>
+          <Navbar.Brand style={{ color: "#FFF", fontWeight: "bold" }}>Professional Digital Wallet Demo - {myaccount}</Navbar.Brand>
           <Button variant="primary" onClick={() => handleButtonClick('logout', 3)} className={activeIndex === 3 ? "btn btn-danger btn-sm" : "btn btn-danger btn-sm"} style={{ maxHeight: 40 }}>Log Out</Button>
         </Container>
       </Navbar>
@@ -555,8 +475,14 @@ function App() {
         <Row className="h-100">
           <Col md={2} className="bg-light">
             <Nav className="flex-column d-flex align-items-center">
-            <button onClick={() => handleButtonClick('enlistCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Enlist Cert</button>
-              <button onClick={() => handleButtonClick('mintCert', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Certificate</button>
+              {
+                myaccount=="Admin" && 
+                <button onClick={() => handleButtonClick('enlistCert', 1)} className={activeIndex === 1 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Enlist Cert</button>
+              }
+              {
+                myaccount=="Admin" &&
+                <button onClick={() => handleButtonClick('mintCert', 2)} className={activeIndex === 2 ? "btn btn-success btn-sm mt-2 block" : "btn btn-default btn-sm mt-2 block"} style={{ width: '100%', border: '1px solid #ddd' }}>Issue Certificate</button>
+              }
               <button onClick={() => handleButtonClick('listOwneredNFT', 3)} className={activeIndex === 3 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>List Owned NFT</button>
               <button onClick={() => handleButtonClick('getAccounts', 4)} className={activeIndex === 4 ? "btn btn-success btn-sm" : "btn btn-default btn-sm"} style={{ width: '100%', border: '1px solid #ddd', marginTop: 10 }}>View Account</button>
             </Nav>
@@ -613,10 +539,10 @@ function App() {
           <h4 style={{ color: "#666" }}>Professional Digital Wallet</h4>
         </center>
         <Form style={{ marginTop: 20 }}>
-          <Button type="button" className="d-block mx-auto" onClick={login}>
+          {/* <Button type="button" className="d-block mx-auto" onClick={login}>
             Login with Metamask
           </Button>
-          <br />
+          <br /> */}
           <Button variant="primary" type="button" className="d-block mx-auto" onClick={loginSocial}>
             Login with Google
           </Button>
@@ -709,7 +635,7 @@ function App() {
             setMintCertificate(false);
           }}
           show={mintCertificatePop}
-          title="Issue Certificate"
+          title="Issue Credential"
           onchange={onChange}
           onsubmit={onSubmit}
           onGenerate={onGenerate}

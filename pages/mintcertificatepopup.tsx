@@ -40,9 +40,9 @@ const CustomPopup = (props: any) => {
               {!showFields && (
                 <>
                   <Row className="mb-3">
-                    <Form.Group as={Col} xs={12} controlId="Certificate Text">
-                      <Form.Label>Certificate Text</Form.Label>
-                      <Form.Control as="textarea" rows={3} placeholder="Enter Certificate Text" onChange={(evt) => { onchange("certificateTextPhrase", evt) }} />
+                    <Form.Group as={Col} xs={12} controlId="Credential Text">
+                      <Form.Label>Credential Text</Form.Label>
+                      <Form.Control as="textarea" rows={3} placeholder="Enter Credential Text" value="Employee of the Quarter" onChange={(evt) => { onchange("certificateTextPhrase", evt) }} />
                     </Form.Group>
                   </Row>
                   <Row className="mb-3">
@@ -75,20 +75,20 @@ const CustomPopup = (props: any) => {
                 <>
                   <Row className="mb-3">
                     <Form.Group as={Col} xs={12} controlId="Name of Certificate">
-                      <Form.Label>Name of Certificate</Form.Label>
-                      <Form.Control type="text" placeholder="Enter Name of Certificate" onChange={(evt) => { onchange("certName", evt) }} />
+                      <Form.Label>Credential</Form.Label>
+                      <Form.Control type="text" placeholder="Enter Credential" value="Congratulations" onChange={(evt) => { onchange("certName", evt) }} />
                     </Form.Group>
                   </Row>
                   <Row className="mb-3">
                     <Form.Group as={Col} xs={12} controlId="Recipient Address">
                       <Form.Label>Recipient Address</Form.Label>
-                      <Form.Control type="text" placeholder="Enter Recipient Address" onChange={(evt) => { onchange("receiverAddress", evt) }} />
+                      <Form.Control type="text" placeholder="Enter Recipient Address" value="0xb21Fb1fEEFcdc0DEd8Ae4de59519c248745F7aCF" onChange={(evt) => { onchange("receiverAddress", evt) }} />
                     </Form.Group>
                   </Row>
                   <Row className="mb-3">
                     <Form.Group as={Col} xs={12} controlId="Description">
                       <Form.Label>Description</Form.Label>
-                      <Form.Control as="textarea" rows={3} placeholder="Enter Description" onChange={(evt) => { onchange("certificateDescription", evt) }} />
+                      <Form.Control as="textarea" rows={3} placeholder="Enter Description" value="Congratulations on your incredible success! You set an amazing example for everyone at the company. Keep up the good work." onChange={(evt) => { onchange("certificateDescription", evt) }} />
                     </Form.Group>
                   </Row>
                   <Button variant="primary" type="button" onClick={() => { onsubmit() }}>

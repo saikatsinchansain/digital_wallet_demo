@@ -145,7 +145,7 @@ export default class EthereumRpc {
       console.log("Receiver Address: " + receiverAddress);
       var err,txHash = await contract.methods.safeMint(receiverAddress,"ipfs://" + metadataHash).send({from: walletAddress.toLowerCase(), gas: 4700000});
       
-      return "Success";
+      return "Recognition has been issued to the employee successfully!";
     } catch (error) {
       return error.reason as string;
     }
